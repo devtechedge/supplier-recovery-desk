@@ -49,6 +49,38 @@ function wrapSqliteDatabase(rawDb: SqliteDatabase): SqliteDatabase {
   };
 }
 
+export interface SqliteModule {
+  DatabaseSync: new (path: string) => SqliteDatabase;
+}
+
+/**
+ * Loads a SQLite engine. Prefers the Node built-in `node:sqlite` (Node >= 22),
+ * then falls back to `better-sqlite3` (interface-compatible) on runtimes that
+ * ship without the built-in module (for example Vercel's Node 24 functions).
+ */
+function loadSqliteModule(): SqliteModule {
+  const g = (
+    process as unknown as {
+      getBuiltinModule?: (id: string) => SqliteModule | undefined;
+    }
+  ).getBuiltinModule;
+  if (typeof g === 'function') {
+    const builtin = g('node:sqlite');
+    if (builtin?.DatabaseSync) {
+      return builtin;
+    }
+  }
+
+  const { createRequire } = require('node:module') as {
+    createRequire: (filename: string) => NodeRequire;
+  };
+  const nodeRequire = createRequire(__filename);
+  const BetterSqlite3 = nodeRequire('better-sqlite3') as new (
+    path: string
+  ) => SqliteDatabase;
+  return { DatabaseSync: BetterSqlite3 };
+}
+
 export function getDb(): SqliteDatabase {
   const targetPath = getDbFilePath();
   if (dbInstance && initializedPath === targetPath) {
@@ -62,15 +94,7 @@ export function getDb(): SqliteDatabase {
     }
   }
 
-  const sqliteMod = (
-    process as unknown as {
-      getBuiltinModule?: (id: string) => { DatabaseSync: new (path: string) => SqliteDatabase };
-    }
-  ).getBuiltinModule?.('node:sqlite');
-
-  if (!sqliteMod) {
-    throw new Error('node:sqlite built-in module is required (Node.js >= 22)');
-  }
+  const sqliteMod = loadSqliteModule();
 
   const rawDb = new sqliteMod.DatabaseSync(targetPath);
   rawDb.exec('PRAGMA foreign_keys = ON;');

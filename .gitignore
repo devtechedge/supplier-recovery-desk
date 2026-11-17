@@ -12,3 +12,5 @@ coverage/
 dev*.out
 dev*.err
 smoke*.log
+.vercel
+.env*

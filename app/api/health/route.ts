@@ -27,10 +27,9 @@ export async function GET() {
       },
     });
   } catch (err) {
-    const detail =
-      err instanceof Error
-        ? { message: err.message, name: err.name, stack: err.stack?.slice(0, 800) }
-        : { raw: String(err) };
-    return NextResponse.json({ status: 'error', detail }, { status: 500 });
+    return NextResponse.json(
+      { status: 'error', error: err instanceof Error ? err.message : 'Health check failed' },
+      { status: 500 }
+    );
   }
 }

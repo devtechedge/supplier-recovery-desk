@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { getDb, runInTransaction } from './index';
+import { resolveWritableDir } from '@/lib/storage/paths';
 
 export const DEMO_ORG_ID = '11111111-1111-4111-8111-111111111111';
 export const DEMO_OWNER_ID = '22222222-2222-4222-8222-222222222221';
@@ -38,7 +39,7 @@ export function ensureDemoDataSeeded(forceReset = false): void {
     }
 
     // Ensure demo evidence files exist in private storage
-    const evidenceDir = path.join(process.cwd(), '.data', 'evidence', DEMO_ORG_ID);
+    const evidenceDir = path.join(resolveWritableDir('evidence'), DEMO_ORG_ID);
     if (!fs.existsSync(evidenceDir)) {
       fs.mkdirSync(evidenceDir, { recursive: true });
     }

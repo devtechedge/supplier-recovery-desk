@@ -1,8 +1,8 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { createClient } from '@supabase/supabase-js';
+import { resolveWritableDir } from '@/lib/storage/paths';
 
 export const ALLOWED_EVIDENCE_MIME_TYPES = new Set([
   'application/pdf',
@@ -35,13 +35,7 @@ export function validateEvidenceFile(params: {
 }
 
 function getStorageRoot(): string {
-  const cwdEvidence = path.join(process.cwd(), '.data', 'evidence');
-  try {
-    fs.mkdirSync(cwdEvidence, { recursive: true });
-    return cwdEvidence;
-  } catch {
-    return path.join(os.tmpdir(), 'srd-evidence');
-  }
+  return resolveWritableDir('evidence');
 }
 
 function isSupabaseStorageConfigured(): boolean {

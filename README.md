@@ -2,6 +2,25 @@
 
 Multi-tenant B2B operational loss & supplier recovery workspace built with Next.js 15 App Router, React 19, TypeScript, Tailwind CSS v4, Drizzle ORM, PostgreSQL / Supabase migrations, Stripe billing, PDF dossier generation (`pdf-lib`), and optional server-side Gemini document assistance (`@google/genai`).
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-22c55e?style=flat-square&label=Live%20Demo)](https://supplier-recovery-desk.vercel.app)
+[![CI](https://github.com/devtechedge/supplier-recovery-desk/actions/workflows/ci.yml/badge.svg)](https://github.com/devtechedge/supplier-recovery-desk/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+## Live Demo
+
+**https://supplier-recovery-desk.vercel.app**
+
+Open the demo workspace in one click from the landing page (no sign-up required), or create an organization account.
+
+> **Demo data note:** the hosted demo runs on an embedded, ephemeral SQLite store that resets on cold start and is fully isolated from real customer records. To run with a persistent database, connect a Postgres/Supabase project using the variables in `.env.example`.
+
+## Screenshots
+
+![Recovery overview](docs/screenshots/01-overview.png)
+![Recovery cases](docs/screenshots/02-cases.png)
+![CSV import wizard](docs/screenshots/03-imports.png)
+![Case workspace](docs/screenshots/05-case-workspace.png)
+
 ## Core Capabilities
 
 - **Financial Integrity & Multi-Currency Separation**: Strictly separates `Potentially Recoverable`, `Submitted`, `Approved`, `Expected Credits`, and `Actual Recovered` amounts per currency using integer minor-unit arithmetic (`cents`).
@@ -14,10 +33,10 @@ Multi-tenant B2B operational loss & supplier recovery workspace built with Next.
 ## Local Development Setup
 
 ```bash
-npm install
+bun install
 cp .env.example .env.local
-npm run seed
-npm run dev
+bun run seed
+bun run dev
 ```
 
 Open `http://localhost:3000`. Use **Open Live Demo** on the landing page or sign in at `/auth/signin`.
@@ -35,10 +54,10 @@ See `.env.example` for all supported variables:
 ## Verification & Quality Gates
 
 ```bash
-npm run lint
-npx tsc --noEmit
-npx tsx --test lib/domain/domain.test.ts tests/integration.test.ts
-npm run build
+bun run lint
+bun run typecheck
+bun run test
+bun run build
 ```
 
 ## Production Deployment (Supabase + GitHub + Vercel)

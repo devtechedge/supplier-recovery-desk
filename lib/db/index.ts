@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import BetterSqlite3 from 'better-sqlite3';
 
 export interface SqliteStatement {
   run: (...params: unknown[]) => { changes: number | bigint; lastInsertRowid: number | bigint };
@@ -55,11 +54,24 @@ export interface SqliteModule {
 }
 
 /**
- * Loads a SQLite engine. Prefers the Node built-in `node:sqlite` (Node >= 22),
- * then falls back to `better-sqlite3` (interface-compatible) on runtimes that
- * ship without the built-in module (for example Vercel's Node 24 functions).
+ * Loads a SQLite engine. Prefers `bun:sqlite` when running under Bun (for
+ * example Vercel's serverless runtime), then the Node built-in `node:sqlite`
+ * (Node >= 22). Both expose the same DatabaseSync-style API.
  */
 function loadSqliteModule(): SqliteModule {
+  if (typeof (process.versions as Record<string, string | undefined>).bun === 'string') {
+    const { createRequire } = require('node:module') as {
+      createRequire: (filename: string) => NodeRequire;
+    };
+    const nodeRequire = createRequire(__filename);
+    const bunModule = nodeRequire('bun:sqlite') as {
+      Database: new (path: string) => SqliteDatabase;
+    };
+    if (bunModule?.Database) {
+      return { DatabaseSync: bunModule.Database };
+    }
+  }
+
   const g = (
     process as unknown as {
       getBuiltinModule?: (id: string) => SqliteModule | undefined;
@@ -72,7 +84,7 @@ function loadSqliteModule(): SqliteModule {
     }
   }
 
-  return { DatabaseSync: BetterSqlite3 as unknown as new (path: string) => SqliteDatabase };
+  throw new Error('No SQLite engine available (expected bun:sqlite or node:sqlite)');
 }
 
 export function getDb(): SqliteDatabase {

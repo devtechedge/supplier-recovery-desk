@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { createClient } from '@supabase/supabase-js';
 
@@ -34,6 +35,9 @@ export function validateEvidenceFile(params: {
 }
 
 function getStorageRoot(): string {
+  if (process.env.VERCEL) {
+    return path.join(os.tmpdir(), 'srd-evidence');
+  }
   return path.join(process.cwd(), '.data', 'evidence');
 }
 

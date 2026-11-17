@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 
 export interface SqliteStatement {
@@ -20,7 +21,10 @@ function getDbFilePath(): string {
   if (process.env.SRD_SQLITE_PATH) {
     return process.env.SRD_SQLITE_PATH;
   }
-  return path.join(process.cwd(), '.data', 'srd.db');
+  const root = process.env.VERCEL
+    ? path.join(os.tmpdir(), 'srd')
+    : path.join(process.cwd(), '.data');
+  return path.join(root, 'srd.db');
 }
 
 function toPlainRow(row: unknown): unknown {

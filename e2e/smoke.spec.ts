@@ -1,10 +1,8 @@
 import { test, expect } from '@playwright/test';
 
 async function openDemo(page: import('@playwright/test').Page) {
-  await page.goto('/');
-  await page.evaluate(async () => {
-    await fetch('/api/auth/session', { method: 'POST' });
-  });
+  const res = await page.request.post('/api/auth/session');
+  expect(res.ok()).toBeTruthy();
 }
 
 test('landing page renders hero and demo CTA', async ({ page }) => {
@@ -29,7 +27,7 @@ test('demo session opens the overview dashboard', async ({ page }) => {
 test('cases list renders from demo data', async ({ page }) => {
   await openDemo(page);
   await page.goto('/app/cases');
-  await expect(page.getByText('Recovery Cases')).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByRole('heading', { name: 'Recovery Cases' })).toBeVisible({ timeout: 20_000 });
 });
 
 test('imports page loads with its wizard controls', async ({ page }) => {

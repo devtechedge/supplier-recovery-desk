@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export function PublicHeader() {
   const router = useRouter();
@@ -49,6 +50,7 @@ export function PublicHeader() {
         </nav>
 
         <div className="hidden md:flex items-center shrink-0">
+          <ThemeToggle />
           <button
             type="button"
             onClick={handleOpenDemo}

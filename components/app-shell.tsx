@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { ThemeToggle } from '@/components/theme-toggle';
 import {
   BarChart3,
   Building2,
@@ -220,6 +221,7 @@ export function AppShell({
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
+            <ThemeToggle />
             <Link
               href="/app/imports"
               className="hidden sm:inline-flex rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 whitespace-nowrap"

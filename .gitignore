@@ -9,3 +9,6 @@ coverage/
 .playwright-cli/
 .aistudio/
 *.tsbuildinfo
+dev*.out
+dev*.err
+smoke*.log

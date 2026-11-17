@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import BetterSqlite3 from 'better-sqlite3';
 
 export interface SqliteStatement {
   run: (...params: unknown[]) => { changes: number | bigint; lastInsertRowid: number | bigint };
@@ -71,13 +72,6 @@ function loadSqliteModule(): SqliteModule {
     }
   }
 
-  const { createRequire } = require('node:module') as {
-    createRequire: (filename: string) => NodeRequire;
-  };
-  const nodeRequire = createRequire(__filename);
-  const BetterSqlite3 = nodeRequire('better-sqlite3') as new (
-    path: string
-  ) => SqliteDatabase;
   return { DatabaseSync: BetterSqlite3 };
 }
 

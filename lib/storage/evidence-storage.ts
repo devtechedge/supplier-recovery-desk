@@ -35,10 +35,13 @@ export function validateEvidenceFile(params: {
 }
 
 function getStorageRoot(): string {
-  if (process.env.VERCEL) {
+  const cwdEvidence = path.join(process.cwd(), '.data', 'evidence');
+  try {
+    fs.mkdirSync(cwdEvidence, { recursive: true });
+    return cwdEvidence;
+  } catch {
     return path.join(os.tmpdir(), 'srd-evidence');
   }
-  return path.join(process.cwd(), '.data', 'evidence');
 }
 
 function isSupabaseStorageConfigured(): boolean {

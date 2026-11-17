@@ -17,13 +17,21 @@ export interface SqliteDatabase {
 let dbInstance: SqliteDatabase | null = null;
 let initializedPath: string | null = null;
 
+function isDirWritable(dir: string): boolean {
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function getDbFilePath(): string {
   if (process.env.SRD_SQLITE_PATH) {
     return process.env.SRD_SQLITE_PATH;
   }
-  const root = process.env.VERCEL
-    ? path.join(os.tmpdir(), 'srd')
-    : path.join(process.cwd(), '.data');
+  const cwdData = path.join(process.cwd(), '.data');
+  const root = isDirWritable(cwdData) ? cwdData : path.join(os.tmpdir(), 'srd');
   return path.join(root, 'srd.db');
 }
 

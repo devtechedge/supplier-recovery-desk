@@ -72,7 +72,7 @@ function loadSqliteModule(): SqliteModule {
     }
   }
 
-  return { DatabaseSync: BetterSqlite3 };
+  return { DatabaseSync: BetterSqlite3 as unknown as new (path: string) => SqliteDatabase };
 }
 
 export function getDb(): SqliteDatabase {

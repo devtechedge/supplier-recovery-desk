@@ -1,4 +1,9 @@
 {
   "framework": "nextjs",
-  "bunVersion": "1.x"
+  "bunVersion": "1.x",
+  "functions": {
+    "app/api/**/*.ts": {
+      "runtime": "nodejs22.x"
+    }
+  }
 }
